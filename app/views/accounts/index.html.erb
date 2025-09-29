@@ -1,0 +1,145 @@
+<div class="row">
+  <div class="col">
+    <h1>Rollen</h1>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Rolle</th>
+          <th>Kommentar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Admin</td>
+          <td>
+            Ein Administrator kann neue Inhalte erstellen, alle Inhalte lesen, bearbeiten und freigeben. <br />
+            Neu erstellte Inhalte sind sofort freigegeben und damit öffentlich lesbar.
+          </td>
+        </tr>
+        <tr>
+          <td>App</td>
+          <td>Ein mobile App kann alle freigegebene Inhalte lesen.</td>
+        </tr>
+        <tr>
+          <td>User</td>
+          <td>
+            Ein User kann neue Inhalte erstellen und eigene Inhalte lesen und bearbeiten. <br />
+            Neu erstellte Inhalte sind sofort freigegeben und damit öffentlich lesbar.
+          </td>
+        </tr>
+        <tr>
+          <td>Extended User</td>
+          <td>
+            Ein Extended User kann wie der User neue Inhalte erstellen und eigene Inhalte lesen und bearbeiten. <br />
+            Neu erstellte Inhalte sind sofort freigegeben und damit öffentlich lesbar.
+            Der Extended User kann zudem wie der Admin alle Inhalte lesen. Er kann jedoch nur eigene Inhalte bearbeiten.
+          </td>
+        </tr>
+        <tr>
+          <td>Restricted</td>
+          <td>
+            Ein beschränkter Account kann neue Inhalte erstellen und eigene Inhalte lesen und bearbeiten. <br />
+            Neu erstellte Inhalte sind jedoch <strong>nicht</strong> freigegeben und können <strong>nicht</strong> von der Rolle 'App' gelesen werden.
+          </td>
+        </tr>
+        <tr>
+          <td>Editor</td>
+          <td>
+            Ein Editor kann neue Inhalte erstellen und eigene Inhalte lesen und bearbeiten. <br />
+            Neu erstellte Inhalte sind sofort freigegeben und damit öffentlich lesbar. <br />
+            Zudem kann er alle Inhalte von allen beschränkten Accounts lesen, bearbeiten und freigeben.
+          </td>
+        </tr>
+        <tr>
+          <td>Read only</td>
+          <td>
+            Ein "Read only" kann <strong>alle</strong> öffentlichen Inhalte nur lesen. <br />
+            Dieser Account ist für externe Zugänge gedacht, bsp.: Veranstaltungsexporter
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 id="accounts">Nutzerverwaltung</h1>
+
+    <p><%= link_to "Neuen Nutzer erstellen", new_account_path, class: "btn btn-success" %></p>
+
+    <%= render partial: "search_form", locals: { form_path: accounts_path, search_column: "email" } %>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th style="min-width: 55px">
+            <%= link_to "ID", accounts_path(params_for_link(:id)) + "#accounts" %>
+            <%= render partial: "sort_icon", locals: { sort_column: "id" } %>
+          </th>
+          <th>
+            <%= link_to "E-Mail", accounts_path(params_for_link(:email)) + "#accounts" %>
+            <%= render partial: "sort_icon", locals: { sort_column: "email" } %>
+          </th>
+          <th>Data Provider</th>
+          <th>Rolle</th>
+          <th>CMS POI <span class="badge badge-secondary">Kategorie gesetzt?</span></th>
+          <th>CMS Tour <span class="badge badge-secondary">Kategorie gesetzt?</span></th>
+          <th>CMS News Items <span class="badge badge-secondary">Kategorie gesetzt?</span></th>
+          <th>CMS Event Records <span class="badge badge-secondary">Kategorie gesetzt?</span></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <% data_provider = user.data_provider %>
+
+          <tr id="user_<%= user.id %>">
+            <td class="align-middle"><%= user.id %></td>
+            <td class="align-middle"><%= link_to user.email, edit_account_path(user) %></td>
+            <td class="align-middle"><%= data_provider.try(:name) %></td>
+            <td class="align-middle"><%= user.role.try(:humanize) %></td>
+            <td class="align-middle">
+              <span class="badge <%= data_provider.try(:role_point_of_interest) ? 'badge-success' : 'badge-danger' %>">
+                <%= data_provider.try(:role_point_of_interest) ? "aktiv" : "" %>
+              </span>
+                <% if data_provider.try(:settings, "PointOfInterest")&.has_default_categories? %>
+                  <span class="badge badge-secondary">ja</span>
+                <% end %>
+            </td>
+            <td class="align-middle">
+              <span class="badge <%= data_provider.try(:role_tour) ? 'badge-success' : 'badge-danger' %>">
+                <%= data_provider.try(:role_tour) ? "aktiv" : "" %>
+              </span>
+              <% if data_provider.try(:settings, "Tour")&.has_default_categories? %>
+                <span class="badge badge-secondary">ja</span>
+              <% end %>
+            </td>
+            <td class="align-middle">
+              <span class="badge <%= data_provider.try(:role_news_item) ? 'badge-success' : 'badge-danger' %>">
+                <%= data_provider.try(:role_news_item) ? "aktiv" : "" %>
+              </span>
+              <% if data_provider.try(:settings, "NewsItem")&.has_default_categories? %>
+                <span class="badge badge-secondary">ja</span>
+              <% end %>
+            </td>
+            <td class="align-middle">
+              <span class="badge <%= data_provider.try(:role_event_record) ? 'badge-success' : 'badge-danger' %>">
+                <%= data_provider.try(:role_event_record) ? "aktiv" : "" %>
+              </span>
+              <% if data_provider.try(:settings, "EventRecord")&.has_default_categories? %>
+                <span class="badge badge-secondary">ja</span>
+              <% end %>
+            </td>
+            <td class="align-middle" style="width: 70px">
+              <%= link_to t('doorkeeper.applications.buttons.edit'), edit_account_path(user), class: "btn btn-sm btn-outline-secondary" %>
+            </td>
+            <td class="align-middle" style="width: 70px">
+              <%= link_to "Destroy", account_path(user), method: :delete, class: "btn btn-sm btn-outline-danger", data: { confirm: "Sind sie sicher?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @users, theme: "twitter-bootstrap-4" %>
+  </div>
+</div>

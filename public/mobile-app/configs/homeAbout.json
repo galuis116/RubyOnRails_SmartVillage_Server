@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Mitmachen",
+    "routeName": "Html",
+    "params": {
+      "title": "Mitmachen",
+      "query": "publicHtmlFile",
+      "queryVariables": {
+        "name": "mitmachen"
+      },
+      "rootRouteName": "Mitmachen",
+      "subQuery": "false"
+    }
+  },
+  {
+    "title": "Feedback",
+    "routeName": "Html",
+    "params": {
+      "title": "Feedback",
+      "query": "publicHtmlFile",
+      "queryVariables": {
+        "name": "feedback"
+      },
+      "rootRouteName": "Feedback",
+      "subQuery": "false"
+    }
+  },
+  {
+    "title": "Impressum",
+    "routeName": "Html",
+    "params": {
+      "title": "Impressum",
+      "query": "publicHtmlFile",
+      "queryVariables": {
+        "name": "impressum"
+      },
+      "rootRouteName": "Impressum",
+      "subQuery": "false"
+    }
+  }
+]

@@ -1,0 +1,70 @@
+<%= form_with(model: category, local: true) do |form| %>
+  <% if category.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:
+      </h2>
+
+      <ul>
+        <% category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :parent_id, "ID of parent category" %>
+    <%= form.text_field :parent_id, class: "form-control" %>
+    <small class="form-text text-muted">
+      To move a category inside a tree, insert here the id of the new parent category
+    </small>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :icon_name %>
+    <%= form.text_field :icon_name, class: "form-control" %>
+    <small class="form-text text-muted">
+      An icon name can be given that is available in the mobile app to show in certain screens
+      and as fallback in some cases where images of data resources are missing.
+    </small>
+  </div>
+
+  <%= form.fields_for :contact, object: @category.contact || @category.build_contact do |contact| %>
+    <div class="form-group">
+      <%= contact.label :email, "E-mails for certain notifications" %>
+      <%= contact.text_field :email, class: "form-control" %>
+      <small class="form-text text-muted">
+        If there are notification logics for that category,
+        e-mail should go to these addresses (comma separated)
+      </small>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :tag_list, "Tags" %>
+    <%= form.select :tag_list, Category::TAG_OPTIONS.map{ |item| [I18n.t("data_resource.#{item}.other"), item] }.sort, { include_blank: false }, { multiple: true, class: "form-control select2" } %>
+    <small class="form-text text-muted">
+      Select one or more tags for the category
+    </small>
+  </div>
+
+  <div class="form-group">
+    <%= form.submit t("doorkeeper.applications.buttons.submit"), class: "btn btn-primary" %>
+    <%= link_to t("doorkeeper.applications.buttons.cancel"), categories_path, class: "btn btn-default" %>
+  </div>
+<% end %>
+
+
+<script>
+  $(document).ready(function() {
+    $('.select2').select2({
+      theme: 'default'
+    });
+  });
+</script>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render partial: "layouts/partials/head", locals: { no_admin_styles: true }  %>
+</head>
+<body>
+  <div id="container">
+    <%- if flash[:notice].present? %>
+      <div class="alert alert-info">
+        <%= flash[:notice] %>
+      </div>
+    <% end -%>
+
+    <%= yield %>
+  </div>
+</body>
+</html>

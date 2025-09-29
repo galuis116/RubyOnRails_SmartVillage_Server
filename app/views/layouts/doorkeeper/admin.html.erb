@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render partial: "layouts/partials/head" %>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+    <%= link_to "Smart Village App - Main-Server", root_path, class: "navbar-brand" %>
+
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+
+        <% if current_user.admin_role? %>
+          <li class="nav-item">
+            <%= link_to "Accounts", accounts_path, class: "nav-link" %>
+          </li>
+
+          <li class="nav-item <%= 'active' if request.path == oauth_applications_path %>">
+            <%= link_to t('doorkeeper.layouts.admin.nav.applications'), oauth_applications_path, class: "nav-link" %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to "Static Contents", static_contents_path, class: "nav-link" %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to "App User Contents", app_user_contents_path, class: "nav-link" %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to "Categories", categories_path, class: "nav-link" %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to "Backgroundjobs", "/background", class: "nav-link" %>
+          </li>
+        <% end %>
+
+        <% if current_user && current_user.try(:data_provider).try(:role_push_notification) %>
+          <li class="nav-item">
+            <%= link_to "Push Notifications", notification_devices_path, class: "nav-link" %>
+          </li>
+        <% end %>
+
+        <li class="nav-item">
+          <%= link_to "Data Provider", edit_data_provider_path, class: "nav-link" %>
+        </li>
+
+        <li class="nav-item">
+          <%= link_to "GraphQL API", "/graphiql", class: "nav-link" %>
+        </li>
+
+        <li class="nav-item">
+          <%= link_to "CMS", Rails.application.credentials.cms[:url], class: "nav-link", target: "_blank" %> 
+        </li>
+
+        <li class="nav-item">
+          <%= link_to "Sign out (#{current_user.email})", destroy_user_session_path, class: "nav-link", method: :delete %>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="doorkeeper-admin container">
+    <%- if flash[:notice].present? %>
+      <div class="alert alert-info">
+        <%= flash[:notice] %>
+      </div>
+    <% end -%>
+
+    <%= yield %>
+  </div>
+</body>
+</html>

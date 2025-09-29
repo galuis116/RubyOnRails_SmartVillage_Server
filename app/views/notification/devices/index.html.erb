@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="col">
+    <h1>Push Notifications senden</h1>
+
+    <%= render(
+          partial: "notification/devices/send_notification",
+          locals: {
+            submit_path: send_notifications_notification_devices_path,
+            submit_text: "An #{pluralize(@notification_devices.total_count, "Device")} senden"
+          }
+        ) %>
+
+    <br />
+
+    <h1 id="devices">Devices</h1>
+
+    <p><%= link_to 'New Device', new_notification_device_path, class: "btn btn-success" %></p>
+
+    <%= render partial: 'search_form', locals: { form_path: notification_devices_path, search_column: 'token' } %>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>
+            <%= link_to "Token", notification_devices_path(params_for_link(:token)) + "#devices" %>
+            <%= render partial: 'sort_icon', locals: { sort_column: 'token' } %>
+          </th>
+          <th>
+            <%= link_to "Operating System", notification_devices_path(params_for_link(:device_type)) + "#devices" %>
+            <%= render partial: 'sort_icon', locals: { sort_column: 'device_type' } %>
+          </th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @notification_devices.each do |notification_device| %>
+          <tr>
+            <td class="align-middle"><%= notification_device.token %></td>
+            <td class="align-middle"><%= notification_device.device_type %></td>
+            <td class="align-middle" style="width: 70px"><%= link_to 'More', notification_device_path(notification_device), class: 'btn btn-sm btn-outline-secondary' %></td>
+            <td class="align-middle" style="width: 70px"><%= link_to 'Destroy', notification_device, method: :delete,class: 'btn btn-sm btn-outline-danger', data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @notification_devices, theme: 'twitter-bootstrap-4' %>
+
+    <br />
+
+    <h1>All Push Notifications Logs</h1>
+    <p>Alte Daten werden automatisch gelöscht</p>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Device Token</th>
+          <th>Messages Title</th>
+          <th>Messages Body</th>
+          <th>Messages Data</th>
+          <th>Payload</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @push_logs.each do |token, messages| %>
+          <% messages.each do |message| %>
+            <% serialized_message = JSON.parse(message) rescue {} %>
+            <tr>
+              <td><%= serialized_message["date"] %></td>
+              <td><%= token %></td>
+              <td><%= serialized_message["title"] %></td>
+              <td><%= serialized_message["body"] %></td>
+              <td><%= serialized_message["data"] %></td>
+              <td><%= serialized_message["payload"] %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
