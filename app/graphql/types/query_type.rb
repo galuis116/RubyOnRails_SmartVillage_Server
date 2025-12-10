@@ -66,6 +66,10 @@ module Types
       argument :category_ids, [ID], required: false
     end
 
+    field :data_providers, [QueryTypes::DataProviderType], null: false do
+      description "Returns all data providers that have news, events, tours, or places"
+    end
+
     field :survey_comments, [QueryTypes::SurveyComment], null: false do
       argument :survey_id, ID, required: false
     end
@@ -158,6 +162,18 @@ module Types
         .sort_by do |data_provider|
         data_provider.name.downcase
       end.uniq
+    end
+
+    def data_providers
+      # Get all data providers that have at least one news item, event record, tour, or point of interest
+      DataProvider
+        .joins("LEFT JOIN news_items ON news_items.data_provider_id = data_providers.id")
+        .joins("LEFT JOIN event_records ON event_records.data_provider_id = data_providers.id")
+        .joins("LEFT JOIN tours ON tours.data_provider_id = data_providers.id")
+        .joins("LEFT JOIN point_of_interests ON point_of_interests.data_provider_id = data_providers.id")
+        .where("news_items.id IS NOT NULL OR event_records.id IS NOT NULL OR tours.id IS NOT NULL OR point_of_interests.id IS NOT NULL")
+        .order(:name)
+        .distinct
     end
 
     def lunch(id:)

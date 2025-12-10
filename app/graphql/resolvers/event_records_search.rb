@@ -88,6 +88,7 @@ class Resolvers::EventRecordsSearch
   option :order, type: EventRecordsOrder, default: "createdAt_DESC"
   option :dataProvider, type: types.String, with: :apply_data_provider
   option :dataProviderId, type: types.ID, with: :apply_data_provider_id
+  option :dataProviderIds, type: types[types.ID], with: :apply_data_provider_ids
   option :location, type: types.String, with: :apply_location
   option :dateRange, type: types[types.String], with: :apply_date_range
   option :take, type: types.Int, with: :apply_take
@@ -121,6 +122,11 @@ class Resolvers::EventRecordsSearch
   end
 
   def apply_data_provider_id(scope, value)
+    scope.joins(:data_provider).where(data_providers: { id: value })
+  end
+
+  def apply_data_provider_ids(scope, value)
+    return scope if value.blank?
     scope.joins(:data_provider).where(data_providers: { id: value })
   end
 

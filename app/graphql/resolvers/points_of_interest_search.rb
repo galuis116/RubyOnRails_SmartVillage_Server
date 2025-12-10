@@ -79,6 +79,7 @@ class Resolvers::PointsOfInterestSearch
   option :order, type: PointsOfInterestOrder, default: "createdAt_DESC"
   option :dataProvider, type: types.String, with: :apply_data_provider
   option :dataProviderId, type: types.ID, with: :apply_data_provider_id
+  option :dataProviderIds, type: types[types.ID], with: :apply_data_provider_ids
   option :category, type: types.String, with: :apply_category
   option :categoryId, type: types.ID, with: :apply_category_id
   option :categoryIds, type: types[types.ID], with: :apply_category_ids
@@ -105,6 +106,11 @@ class Resolvers::PointsOfInterestSearch
   end
 
   def apply_data_provider_id(scope, value)
+    scope.joins(:data_provider).where(data_providers: { id: value })
+  end
+
+  def apply_data_provider_ids(scope, value)
+    return scope if value.blank?
     scope.joins(:data_provider).where(data_providers: { id: value })
   end
 

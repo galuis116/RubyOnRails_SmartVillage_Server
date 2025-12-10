@@ -53,6 +53,7 @@ class Resolvers::NewsItemsSearch
   option :ids, type: types[types.ID], with: :apply_ids
   option :dataProvider, type: types.String, with: :apply_data_provider
   option :dataProviderId, type: types.ID, with: :apply_data_provider_id
+  option :dataProviderIds, type: types[types.ID], with: :apply_data_provider_ids
   option :excludeDataProviderIds, type: types[types.ID], with: :apply_exclude_data_provider_ids
   option :excludeMowasRegionalKeys, type: types[types.String], with: :apply_exclude_mowas_regional_keys
   option :categoryId, type: types.ID, with: :apply_category_id
@@ -70,6 +71,11 @@ class Resolvers::NewsItemsSearch
   end
 
   def apply_data_provider_id(scope, value)
+    scope.where(data_provider_id: value)
+  end
+
+  def apply_data_provider_ids(scope, value)
+    return scope if value.blank?
     scope.where(data_provider_id: value)
   end
 
