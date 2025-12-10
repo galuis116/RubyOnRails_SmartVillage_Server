@@ -165,15 +165,8 @@ module Types
     end
 
     def data_providers
-      # Get all data providers that have at least one news item, event record, tour, or point of interest
-      DataProvider
-        .joins("LEFT JOIN news_items ON news_items.data_provider_id = data_providers.id")
-        .joins("LEFT JOIN event_records ON event_records.data_provider_id = data_providers.id")
-        .joins("LEFT JOIN tours ON tours.data_provider_id = data_providers.id")
-        .joins("LEFT JOIN point_of_interests ON point_of_interests.data_provider_id = data_providers.id")
-        .where("news_items.id IS NOT NULL OR event_records.id IS NOT NULL OR tours.id IS NOT NULL OR point_of_interests.id IS NOT NULL")
-        .order(:name)
-        .distinct
+      # Get all data providers from the data_providers table
+      DataProvider.order(:name).all
     end
 
     def lunch(id:)
