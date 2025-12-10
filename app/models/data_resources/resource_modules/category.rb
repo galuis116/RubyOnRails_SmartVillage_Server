@@ -22,24 +22,41 @@ class Category < ApplicationRecord
   accepts_nested_attributes_for :contact
 
   def points_of_interest_tree_count(args = nil)
+    base_scope = points_of_interest.visible
+    descendants_scope = descendants.map { |d| d.points_of_interest.visible }
+    
+    # Filter by location if provided
     if args.present? && args[:location].present?
-      return points_of_interest.visible.by_location(args[:location]).count +
-             descendants.map { |d| d.points_of_interest.visible.by_location(args[:location]).count }
-               .compact.sum
+      base_scope = base_scope.by_location(args[:location])
+      descendants_scope = descendants.map { |d| d.points_of_interest.visible.by_location(args[:location]) }
     end
-
-    points_of_interest.visible.count +
-      descendants.map { |d| d.points_of_interest.visible.count }.compact.sum
+    
+    # Filter by data provider IDs if provided
+    if args.present? && args[:data_provider_ids].present?
+      base_scope = base_scope.where(data_provider_id: args[:data_provider_ids])
+      descendants_scope = descendants_scope.map { |scope| scope.where(data_provider_id: args[:data_provider_ids]) }
+    end
+    
+    base_scope.count + descendants_scope.map(&:count).compact.sum
   end
 
   def tours_tree_count(args = nil)
+    base_scope = tours.visible
+    descendants_scope = descendants.map { |d| d.tours.visible }
+    
+    # Filter by location if provided
     if args.present? && args[:location].present?
-      return tours.visible.by_location(args[:location]).count +
-             descendants.map { |d| d.tours.visible.by_location(args[:location]).count }
-               .compact.sum
+      base_scope = base_scope.by_location(args[:location])
+      descendants_scope = descendants.map { |d| d.tours.visible.by_location(args[:location]) }
     end
-
-    tours.visible.count + descendants.map { |d| d.tours.visible.count }.compact.sum
+    
+    # Filter by data provider IDs if provided
+    if args.present? && args[:data_provider_ids].present?
+      base_scope = base_scope.where(data_provider_id: args[:data_provider_ids])
+      descendants_scope = descendants_scope.map { |scope| scope.where(data_provider_id: args[:data_provider_ids]) }
+    end
+    
+    base_scope.count + descendants_scope.map(&:count).compact.sum
   end
 
   def news_items_count

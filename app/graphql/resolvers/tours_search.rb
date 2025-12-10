@@ -59,7 +59,7 @@ class Resolvers::ToursSearch
   end
 
   def apply_data_provider_ids(scope, value)
-    return scope if value.blank?
+    return scope if value.blank? || !value.is_a?(Array) || value.empty?
     scope.joins(:data_provider).where(data_providers: { id: value })
   end
 

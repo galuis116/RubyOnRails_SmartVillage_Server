@@ -40,6 +40,14 @@ module Types
     end
     field :points_of_interest_tree_count, Integer, null: true do
       argument :location, String, required: false
+      argument :data_provider_ids, [ID], required: false
+      
+      def resolve(location: nil, data_provider_ids: nil)
+        args = {}
+        args[:location] = location if location.present?
+        args[:data_provider_ids] = data_provider_ids if data_provider_ids.present?
+        object.points_of_interest_tree_count(args.present? ? args : nil)
+      end
     end
 
     field :tours_count, Integer, null: true, method: :tours_count_by_location do
@@ -50,6 +58,14 @@ module Types
     end
     field :tours_tree_count, Integer, null: true do
       argument :location, String, required: false
+      argument :data_provider_ids, [ID], required: false
+      
+      def resolve(location: nil, data_provider_ids: nil)
+        args = {}
+        args[:location] = location if location.present?
+        args[:data_provider_ids] = data_provider_ids if data_provider_ids.present?
+        object.tours_tree_count(args.present? ? args : nil)
+      end
     end
 
     field :tag_list, String, null: true

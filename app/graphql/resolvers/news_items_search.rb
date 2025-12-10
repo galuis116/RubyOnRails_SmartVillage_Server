@@ -75,7 +75,7 @@ class Resolvers::NewsItemsSearch
   end
 
   def apply_data_provider_ids(scope, value)
-    return scope if value.blank?
+    return scope if value.blank? || !value.is_a?(Array) || value.empty?
     scope.where(data_provider_id: value)
   end
 
